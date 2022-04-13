@@ -1,12 +1,12 @@
 # getREST
 
-Service to provide easy RESTful API for small business, MVP, and prototypes
+Service to provide simple RESTful API for small business, MVPs or prototypes...
 
 ![diagram](./assets/diagram.drawio.png)
 
 # Why
 
-Often all you need from API is just common CRUD operations, so with this tool it's easier to do so, even without programming
+Often all you need from API is just common CRUD operations and with `getREST` it's easy to get such API even without programming
 
 # Actions
 
@@ -14,12 +14,12 @@ Often all you need from API is just common CRUD operations, so with this tool it
 
 Action  | HTTP Verb                 | Description
 --------|---------------------------|--------------
-Create  | `POST /<resource>`        | Create an entity represented by the JSON payload
+Create  | `POST /<resource>`        | Create resource entity from JSON payload
 Read    | `GET /<resource>`         | Get all entities from the resource
-Read    | `GET /<resource>/<id>`    | Get a single entity by id
-Update  | `PUT /<resource>/<id>`    | Replace existing entitiy with the JSON payload
-Update  | `PATCH /<resource>/<id>`  | Partial update for existing entitiy with the JSON payload
-Delete  | `DELETE /<resource>/<id>` | Delete an entity
+Read    | `GET /<resource>/<id>`    | Get one resource entity by id
+Update  | `PUT /<resource>/<id>`    | Replace existing resource entitiy JSON payload
+Update  | `PATCH /<resource>/<id>`  | Partial update for existing resource entitiy with JSON payload
+Delete  | `DELETE /<resource>/<id>` | Delete resource entity
 
 # Examples
 
@@ -93,3 +93,6 @@ curl 'http://localhost:7777/api/4be8973a-5991-44f0-ba2a-1c968a5a7168/cats'
 - [ ] Custom rate limits
 - [ ] Custom endpoints caching
 - [ ] Custom storage size limits
+- [ ] Admin basic auth
+- [ ] Custom API auth?
+- [ ] Configure from .env
