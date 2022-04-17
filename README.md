@@ -75,7 +75,8 @@ curl 'http://localhost:7777/api/4be8973a-5991-44f0-ba2a-1c968a5a7168/cats'
 - [X] Endpoint for DELETE
 - [X] Endpoint for PUT
 - [X] Endpoint for PATCH
-- [ ] Add tests
+- [X] Add tests for CRUD
+- [ ] Add tests for errors
 - [ ] User Dashboard for token
 - [ ] Admin dashboard for tokens
 - [ ] Add persistent storage
@@ -96,3 +97,11 @@ curl 'http://localhost:7777/api/4be8973a-5991-44f0-ba2a-1c968a5a7168/cats'
 - [ ] Admin basic auth
 - [ ] Custom API auth?
 - [ ] Configure from .env
+- [ ] HTTPS?
+- [ ] Docs
+- [ ] XML responses?
+- [ ] CSV responses?
+- [ ] Pagination
+
+Notes:
+- Good rest example with HATEOAS, Filters, Sorting, Pagination: https://habr.com/ru/post/276731/
