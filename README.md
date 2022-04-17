@@ -76,32 +76,33 @@ curl 'http://localhost:7777/api/4be8973a-5991-44f0-ba2a-1c968a5a7168/cats'
 - [X] Endpoint for PUT
 - [X] Endpoint for PATCH
 - [X] Add tests for CRUD
+- [X] Add persistent storage (montydb)
 - [ ] Add tests for errors
 - [ ] User Dashboard for token
 - [ ] Admin dashboard for tokens
-- [ ] Add persistent storage
 - [ ] Token (custom) TTL
 - [ ] Protected API
 - [ ] Versioning?
 - [ ] Nested resources?
-- [ ] Field filters? `?fields=id,name,author` vs `Accept:` header
-- [ ] API callbacks?
+- [ ] Field filters? `?fields=id,name,author`
+- [ ] API callbacks or redirrects?
 - [ ] HATEOAS?
 - [ ] Idempotency?
-- [ ] Custom non uuid4 IDs?
+- [ ] Custom IDs?
 - [ ] Landing page?
 - [ ] Docker image
 - [ ] Custom rate limits
-- [ ] Custom endpoints caching
-- [ ] Custom storage size limits
+- [ ] Custom endpoints caching `POST /api/123/cats/config/cache`?
+- [ ] Custom storage size limits `POST /api/123/cats/config/size`?
 - [ ] Admin basic auth
-- [ ] Custom API auth?
+- [ ] Custom API auth? `POST /api/123/cats/config/auth`?
 - [ ] Configure from .env
 - [ ] HTTPS?
-- [ ] Docs
+- [ ] Auto OpenApi docs?
 - [ ] XML responses?
 - [ ] CSV responses?
 - [ ] Pagination
+- [ ] Validation? `POST /api/123/cats/config/validator`?
 
 Notes:
 - Good rest example with HATEOAS, Filters, Sorting, Pagination: https://habr.com/ru/post/276731/
