@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+        <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+        <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+        <style>
+            .center {
+                justify-content: center;
+            }
+            .header {
+                height: 20px;
+            }
+        </style>
+    </head>
+
+    <body x-data="data()" @hashchange.window="page = location.hash">
+        <header class="navbar m-1 p-1">
+            <section class="navbar-section">
+                <a href="#home" class="navbar-brand p-2 "><b>getREST</b></a>
+                <a href="#home" class="btn btn-link">Home</a>
+                <a href="#dashboard" class="btn btn-link">Dashboard</a>
+                <a href="#about" class="btn btn-link">About</a>
+            </section>
+        </header>
+
+        <div class="container columns center">
+            <div class="column col-6 col-md-11">
+                <h1 x-text="`getREST ${page}`"></h1>
+
+                <div x-show="page == '#home'">
+                    Home Content
+                </div>
+
+                <div x-show="page == '#dashboard'">
+                    Dashboard Content
+                </div>
+
+                <div x-show="page == '#about'">
+                    About Content
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const data = function () {
+                return {
+                    page: '#home',
+                };
+            };
+        </script>
+    </body>
+</html>
