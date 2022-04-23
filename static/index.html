@@ -92,12 +92,14 @@
                     class="toast toast-success notification m-2"
                     x-show.transition="notifications.length > i"
                 >
+                    <button
+                        class="btn btn-clear float-right"
+                        @click="$el.parentElement.style.display = 'none'"
+                    ></button>
                     <span x-text="n"></span>
                 </div>
             </template>
         </div>
-
-
 
         <script>
             const main = function () {
@@ -167,7 +169,7 @@
                     show_notification: async function (notification_text) {
                         // TODO: Support type: success/error
                         this.notifications.push(notification_text);
-                        setTimeout(x => this.notifications.shift(), 3000);
+                        setTimeout(x => this.notifications.shift(), 30000);
                     },
                 }
 
