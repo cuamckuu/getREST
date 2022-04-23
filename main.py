@@ -6,6 +6,7 @@ import fastapi
 import uvicorn
 
 from fastapi import Depends
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from montydb import set_storage, MontyClient
 from montydb.types.objectid import ObjectId
@@ -25,6 +26,10 @@ set_storage(repository='./db/', storage='sqlite')
 def get_storage():
     return MontyClient(STORAGE_DIR)
 
+
+@app.get('/')
+def index():
+    return FileResponse('./static/index.html')
 
 @app.post('/api')
 def create_apis(storage = Depends(get_storage)):
