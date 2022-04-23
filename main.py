@@ -5,6 +5,7 @@ import uuid
 import fastapi
 import uvicorn
 
+from fastapi.middleware.cors import CORSMiddleware
 from montydb import set_storage, MontyClient
 from montydb.types.objectid import ObjectId
 
@@ -12,7 +13,13 @@ STORAGE_DIR = './db/'
 
 set_storage(repository='./db/', storage='sqlite')
 app = fastapi.FastAPI()
-app.state.storage = MontyClient(STORAGE_DIR)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
 
 
 @app.post('/api')
