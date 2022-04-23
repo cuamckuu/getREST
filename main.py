@@ -5,13 +5,12 @@ import uuid
 import fastapi
 import uvicorn
 
+from fastapi import Depends
 from fastapi.middleware.cors import CORSMiddleware
 from montydb import set_storage, MontyClient
 from montydb.types.objectid import ObjectId
 
-STORAGE_DIR = './db/'
 
-set_storage(repository='./db/', storage='sqlite')
 app = fastapi.FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -21,32 +20,37 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
+STORAGE_DIR = './db/'
+set_storage(repository='./db/', storage='sqlite')
+def get_storage():
+    return MontyClient(STORAGE_DIR)
+
 
 @app.post('/api')
-def create_api():
+def create_apis(storage = Depends(get_storage)):
     res = {'api_token': str(uuid.uuid4())}
-    app.state.storage.internal.api_tokens.insert_one(res)
+    storage.internal.api_tokens.insert_one(res)
     res.pop('_id')
     return res
 
 
 def validate_api_token(storage, api_token: str):
     query = {'api_token': api_token}
-    is_found = next(app.state.storage.internal.api_tokens.find(query), None)
+    is_found = next(storage.internal.api_tokens.find(query), None)
     if not is_found:
         raise fastapi.HTTPException(404, detail='Unknown API token')
 
 
 @app.get('/api/{api_token}')
-def get_resources(api_token: str):
-    validate_api_token(app.state.storage, api_token)
-    return app.state.storage[api_token].collection_names()
+def get_resources(api_token: str, storage = Depends(get_storage)):
+    validate_api_token(storage, api_token)
+    return list(set(storage[api_token].collection_names()))
 
 
 @app.get('/api/{api_token}/{resource}')
-def get_resource_list(api_token: str, resource: str):
-    validate_api_token(app.state.storage, api_token)
-    entities = list(app.state.storage[api_token][resource].find())
+def get_resource_list(api_token: str, resource: str, storage = Depends(get_storage)):
+    validate_api_token(storage, api_token)
+    entities = list(storage[api_token][resource].find())
     for entity in entities:
         entity['_id'] = str(entity['_id'])
 
@@ -58,19 +62,25 @@ def create_resource(
     api_token: str,
     resource: str,
     entity: dict = fastapi.Body(...),
+    storage = Depends(get_storage),
 ):
-    validate_api_token(app.state.storage, api_token)
-    res = app.state.storage[api_token][resource].insert_one(entity)
+    validate_api_token(storage, api_token)
+    res = storage[api_token][resource].insert_one(entity)
     entity['_id'] = str(res.inserted_id)
     return entity
 
 
 @app.get('/api/{api_token}/{resource}/{entity_id}')
-def get_entity(api_token: str, resource: str, entity_id: str):
-    validate_api_token(app.state.storage, api_token)
+def get_entity(
+    api_token: str,
+    resource: str,
+    entity_id: str,
+    storage = Depends(get_storage),
+):
+    validate_api_token(storage, api_token)
     try:
         query = {'_id': ObjectId(entity_id)}
-        [entity] = list(app.state.storage[api_token][resource].find(query))
+        [entity] = list(storage[api_token][resource].find(query))
         entity['_id'] = str(entity['_id'])
     except:
         raise fastapi.HTTPException(404, detail='No entity with given id')
@@ -84,9 +94,10 @@ def put_entity(
     resource: str,
     entity_id: str,
     new_entity: dict = fastapi.Body(...),
+    storage = Depends(get_storage),
 ):
     query = {'_id': ObjectId(entity_id)}
-    app.state.storage[api_token][resource].replace_one(query, new_entity)
+    storage[api_token][resource].replace_one(query, new_entity)
     return get_entity(api_token, resource, entity_id)
 
 
@@ -96,6 +107,7 @@ def patch_entity(
     resource: str,
     entity_id: str,
     patch: dict = fastapi.Body(...),
+    storage = Depends(get_storage),
 ):
     old_entity = get_entity(api_token, resource, entity_id)
     new_entity = {**old_entity, **patch}
@@ -104,11 +116,16 @@ def patch_entity(
 
 
 @app.delete('/api/{api_token}/{resource}/{entity_id}')
-def delete_resource(api_token: str, resource: str, entity_id: str):
-    validate_api_token(app.state.storage, api_token)
+def delete_resource(
+    api_token: str,
+    resource: str,
+    entity_id: str,
+    storage = Depends(get_storage),
+):
+    validate_api_token(storage, api_token)
     query = {'_id': ObjectId(entity_id)}
     try:
-        app.state.storage[api_token][resource].delete_one(query)
+        storage[api_token][resource].delete_one(query)
     except:
         pass
     return True
@@ -117,3 +134,4 @@ def delete_resource(api_token: str, resource: str, entity_id: str):
 if __name__ == '__main__':
     HOST, PORT = 'localhost', 7777
     uvicorn.run(app, host=HOST, port=PORT)
+
