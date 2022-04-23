@@ -1,21 +1,35 @@
 <html>
     <head>
+        <!-- Spectre.css -->
         <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
         <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
         <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+
+        <!-- Alpine Plugins -->
+        <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+
+        <!-- Alpine Core -->
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+        <!-- Custom styles -->
         <style>
             .center {
                 justify-content: center;
             }
-            .header {
-                height: 20px;
+            body {
+                font-size: 0.9rem;
+            }
+
+            .notif {
+                max-width: 250px; /* Set a default minimum width */
+                position: fixed; /* Sit on top of the screen */
+                right: 10px; /* Center the snackbar */
+                bottom: 10px; /* 30px from the bottom */
             }
         </style>
     </head>
 
-    <body x-data="data()" @hashchange.window="page = location.hash">
+    <body x-data="main()" @hashchange.window="page = location.hash">
         <header class="navbar m-1 p-1">
             <section class="navbar-section">
                 <a href="#home" class="navbar-brand p-2 "><b>getREST</b></a>
@@ -30,7 +44,35 @@
                 <h1 x-text="`getREST ${page}`"></h1>
 
                 <div x-show="page == '#home'">
-                    Home Content
+                    <h2>Manage API</h2>
+                    Token:
+                    <div class="input-group">
+                        <span class="input-group-addon" x-text="`${API_URL}/`"></span>
+                        <input class="form-input" type="text" x-model="api_token"></input>
+                    </div>
+                    <br>
+                    <button class="btn" @click="on_create_api_btn">Create API</button>
+                    <button class="btn" @click="on_load_resources_btn">Load resources</button>
+                    <div x-show="collections.length" x-transition>
+                        <br>
+                        <b>Available resources:</b>
+                        <template x-for="el in collections">
+                            <div>
+                                - <a x-bind:href="`${API_URL}/${api_token}/${el}`" x-text="el"></a>
+                                <br>
+                            </div>
+                        </template>
+                    </div>
+                    <br>
+                    <hr>
+                    <h2>Create Entity</h2>
+                    <div class="form-group">
+                        <label class="form-label">Resource name</label>
+                        <input type="text" class="form-input" x-model="collection_name"></input>
+                        <label class="form-label">Entity JSON</label>
+                        <textarea class="form-input" x-model="entity_str" rows="5"></textarea>
+                    </div>
+                    <button class="btn" @click="on_create_entity_btn()">Create Entity</button>
                 </div>
 
                 <div x-show="page == '#dashboard'">
@@ -43,10 +85,94 @@
             </div>
         </div>
 
+        <div class="notif p-2">
+            <template x-for="(n, i) in notifications">
+                <div
+                    class="toast toast-success notification m-2"
+                    x-show.transition="notifications.length > i"
+                >
+                    <span x-text="n"></span>
+                </div>
+            </template>
+        </div>
+
+
+
         <script>
-            const data = function () {
-                return {
+            const main = function () {
+                let data = {
+                    API_URL: 'http://localhost:7777/api',
                     page: '#home',
+                    api_token: Alpine.$persist(''),
+                    collections: [],
+                    collection_name: Alpine.$persist('cats'),
+                    entity_str: Alpine.$persist('{\n    "name": "Felix",\n    "color": "black"\n}'),
+                    notifications: [],
+                }
+
+                const methods = {
+                    init: async function () {
+                        await this.load_api_collections();
+                    },
+                    on_create_api_btn: async function () {
+                        const token = await this.create_api();
+                        this.api_token = token;
+                        this.load_api_collections()
+                        await this.show_notification('API created')
+                    },
+                    on_load_resources_btn: async function () {
+                        await this.load_api_collections();
+                        await this.show_notification('Resources loaded')
+                    },
+                    on_create_entity_btn: async function () {
+                        // TODO: Validate JSON
+                        const entity_str = this.entity_str;
+                        const entity = await this.create_entity(this.collection_name, entity_str);
+                        await this.load_api_collections();
+                        await this.show_notification('Entity created')
+                        // TODO: Show response
+                    },
+                    load_api_collections: async function () {
+                        const r = await fetch(`${this.API_URL}/${this.api_token}`);
+                        if (r.status !== 200) {
+                            //this.collections = [];
+                            return;
+                        };
+                        this.collections = await r.json();
+                    },
+                    create_entity: async function (collection, entity_str) {
+                        const r = await fetch(`${this.API_URL}/${this.api_token}/${collection}`, {
+                            body: entity_str,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            method: 'POST'
+                        });
+                        if (r.status != 200) {
+                            return null;
+                        }
+                        return await r.json();
+                    },
+                    create_api: async function () {
+                        const r = await fetch(this.API_URL, {
+                            method: "POST"
+                        });
+                        if (r.status !== 200) {
+                            return;
+                        };
+                        const data = await r.json();
+                        return data['api_token'];
+                    },
+                    show_notification: async function (notification_text) {
+                        // TODO: Support type: success/error
+                        this.notifications.push(notification_text);
+                        setTimeout(x => this.notifications.shift(), 3000);
+                    },
+                }
+
+                return {
+                    ...data,
+                    ...methods,
                 };
             };
         </script>
