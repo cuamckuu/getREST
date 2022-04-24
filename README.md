@@ -64,7 +64,9 @@ curl 'http://localhost:7777/api/4be8973a-5991-44f0-ba2a-1c968a5a7168/cats'
 # Usage
 
 ```bash
-# TODO: docker run ...
+git clone https://github.com/cuamckuu/getREST.git
+cd getREST
+make build run  # Will build docker image and run it
 ```
 
 # TODO
@@ -77,6 +79,7 @@ curl 'http://localhost:7777/api/4be8973a-5991-44f0-ba2a-1c968a5a7168/cats'
 - [X] Endpoint for PATCH
 - [X] Add tests for CRUD
 - [X] Add persistent storage (montydb)
+- [X] Docker image
 - [ ] Add tests for errors
 - [ ] User Dashboard for token
 - [ ] Admin dashboard for tokens
@@ -90,7 +93,6 @@ curl 'http://localhost:7777/api/4be8973a-5991-44f0-ba2a-1c968a5a7168/cats'
 - [ ] Idempotency?
 - [ ] Custom IDs?
 - [ ] Landing page?
-- [ ] Docker image
 - [ ] Custom rate limits
 - [ ] Custom endpoints caching `POST /api/123/cats/config/cache`?
 - [ ] Custom storage size limits `POST /api/123/cats/config/size`?
@@ -106,3 +108,4 @@ curl 'http://localhost:7777/api/4be8973a-5991-44f0-ba2a-1c968a5a7168/cats'
 
 Notes:
 - Good rest example with HATEOAS, Filters, Sorting, Pagination: https://habr.com/ru/post/276731/
+- Another one: https://github.com/typicode/json-server

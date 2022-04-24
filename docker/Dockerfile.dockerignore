@@ -1,0 +1,9 @@
+venv/
+db/
+.vscode/
+.pytest_cache/
+__pycache__/
+assets/
+docker/
+.git/
+.gitignore
