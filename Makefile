@@ -1,8 +1,7 @@
 ## -----------------getREST-Makefile-----------------------
 ## List of supported commands:
 ## - build    - Build docker image
-## - run      - Run docker image
-## - rund     - Run docker image detached
+## - run      - Run docker image on port 7777
 ## - help     - Show help message
 ## --------------------------------------------------------
 

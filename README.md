@@ -66,7 +66,7 @@ curl 'http://localhost:7777/api/4be8973a-5991-44f0-ba2a-1c968a5a7168/cats'
 ```bash
 git clone https://github.com/cuamckuu/getREST.git
 cd getREST
-make build run  # Will build docker image and run it
+make build run  # Will build docker image and run it on port 7777
 ```
 
 # TODO
@@ -80,6 +80,7 @@ make build run  # Will build docker image and run it
 - [X] Add tests for CRUD
 - [X] Add persistent storage (montydb)
 - [X] Docker image
+- [ ] Configure from .env
 - [ ] Add tests for errors
 - [ ] User Dashboard for token
 - [ ] Admin dashboard for tokens
@@ -98,7 +99,6 @@ make build run  # Will build docker image and run it
 - [ ] Custom storage size limits `POST /api/123/cats/config/size`?
 - [ ] Admin basic auth
 - [ ] Custom API auth? `POST /api/123/cats/config/auth`?
-- [ ] Configure from .env
 - [ ] HTTPS?
 - [ ] Auto OpenApi docs?
 - [ ] XML responses?
